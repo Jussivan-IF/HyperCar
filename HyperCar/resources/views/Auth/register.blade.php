@@ -15,6 +15,14 @@
             <input type="email" class="form-control" id="email" name="email" required>
         </div>
         <div class="mb-3">
+            <label for="cpf" class="form-label">CPF</label>
+            <input type="text" class="form-control" id="cpf" name="cpf" required>
+        </div>
+        <div class="mb-3">
+            <label for="endereco" class="form-label">Endereço</label>
+            <input type="text" class="form-control" id="endereco" name="endereco" required>
+        </div>
+        <div class="mb-3">
             <label for="password" class="form-label">Senha</label>
             <input type="password" class="form-control" id="password" name="password" required>
         </div>
