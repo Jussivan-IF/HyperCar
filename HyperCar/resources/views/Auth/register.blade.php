@@ -7,8 +7,8 @@
     <form action="{{ route('register') }}" method="POST">
         @csrf
         <div class="mb-3">
-            <label for="name" class="form-label">Nome</label>
-            <input type="text" class="form-control" id="name" name="name" required>
+            <label for="nome" class="form-label">Nome</label>
+            <input type="text" class="form-control" id="nome" name="nome" required>
         </div>
         <div class="mb-3">
             <label for="email" class="form-label">Email</label>
@@ -20,11 +20,15 @@
         </div>
         <div class="mb-3">
             <label for="endereco" class="form-label">Endereço</label>
-            <input type="text" class="form-control" id="endereco" name="endereco" required>
+            <input type="text" class="form-control" id="endereco" name="endereco">
         </div>
         <div class="mb-3">
-            <label for="password" class="form-label">Senha</label>
-            <input type="password" class="form-control" id="password" name="password" required>
+            <label for="senha" class="form-label">Senha</label>
+            <input type="password" class="form-control" id="senha" name="senha" required>
+        </div>
+        <div class="mb-3">
+            <label for="senha_confirmation" class="form-label">Confirme a Senha</label>
+            <input type="password" class="form-control" id="senha_confirmation" name="senha_confirmation" required>
         </div>
         <button type="submit" class="btn btn-primary">Registrar</button>
     </form>
