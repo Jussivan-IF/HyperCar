@@ -17,29 +17,32 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
+        // Validação dos dados do formulário
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
+            'role' => 'required|string|in:user,admin,company'
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        $credentials = $request->only('email', 'password');
 
-        if ($user && Hash::check($request->password, $user->password)) {
-            Auth::login($user);
-            $user->ultimo_login = now();
-            $user->save();
+        // Tentativa de login
+        if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+            if($user->role === $request->role){
+                $token = $user->createToken('access_token')->plainTextToken;
+            } else {
+                return $this->response(403, 'Permission denied');
+            }
 
-            return redirect()->intended('/register'); // Redireciona após login bem-sucedido
+            return $this->response(200, 'Authorized', ['token' => $token, 'role' => $user->role]);
+        } else {
+            return $this->response(400, 'Not Authorized');
+        }
         }
 
-        return back()->withErrors([
-            'email' => 'As credenciais fornecidas estão incorretas.',
-        ])->onlyInput('email');
-    }
-
     // Mostra o formulário de registro
-    public function showRegistrationForm()
-    {
+    public function showRegistrationForm(){
         return view('auth.register'); // A view deve existir em resources/views/auth/register.blade.php
     }
 
