@@ -2,67 +2,93 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Usuario;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    // Mostra o formulário de login
     public function showLoginForm()
     {
-        return view('auth.login'); // Verifiquei que a view login existe em resources/views/auth/login.blade.php
+        return view('Auth.login');
     }
 
+    // Processar o login
     public function login(Request $request)
+{
+
+
+    // Validação do formulário de login
+    $request->validate([
+        'Email' => 'required|email',
+        'Senha' => 'required|min:6',
+    ]);
+
+    // Verifica as credenciais no banco de dados
+    $usuario = Usuario::where('Email', $request->Email)->first();
+    if($usuario->Email == 'Admin@gmail.com' && Hash::check($request->Senha, $usuario->Senha)) {
+        Auth::login($usuario);  // Realiza o login
+        return redirect()->route('admin');
+    }
+    // Se o usuário existir e a senha for correta, faz o login
+    if ($usuario && Hash::check($request->Senha, $usuario->Senha)) {
+  // Redireciona para a página home após login
+            Auth::login($usuario);  // Realiza o login
+            return redirect()->route('inicio'); 
+        
+    } else {
+        // Se as credenciais não forem válidas, retorna para a página anterior com erro
+        return back()->withErrors(['Email' => 'Credenciais inválidas.']);
+    }
+}
+
+    public function showRegisterForm()
     {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
-
-        $user = User::where('email', $request->email)->first();
-
-        if ($user && Hash::check($request->password, $user->password)) {
-            Auth::login($user);
-            $user->ultimo_login = now();
-            $user->save();
-
-            return redirect()->intended('/register'); // Redireciona após login bem-sucedido
-        }
-
-        return back()->withErrors([
-            'email' => 'As credenciais fornecidas estão incorretas.',
-        ])->onlyInput('email');
+        return view('Auth.register');
     }
 
-    // Mostra o formulário de registro
-    public function showRegistrationForm()
-    {
-        return view('auth.register'); // A view deve existir em resources/views/auth/register.blade.php
-    }
-
-    // Realiza o registro do usuário
     public function register(Request $request)
     {
-        $request->validate([
-            'nome' => 'required|string|max:120',
-            'email' => 'required|string|email|max:100|unique:users',
-            'cpf' => 'required|string|size:11|unique:users',
-            'endereco' => 'nullable|string|max:255',
-            'password' => 'required|string|min:8|confirmed',
+        // Validação dos dados
+        $validator = Validator::make($request->all(), [
+            'Nome' => 'required|string|max:120',
+            'Email' => 'required|email|unique:USUARIO,Email',
+            'Cpf' => 'required|digits:11|unique:USUARIO,Cpf',
+            'Endereco' => 'nullable|string|max:255',
+            'Senha' => 'required|string|min:6|confirmed',
         ]);
 
-        // Cria um novo usuário com os campos do banco atualizados
-        User::create([
-            'nome' => $request->nome,
-            'email' => $request->email,
-            'cpf' => $request->cpf,
-            'endereco' => $request->endereco,
-            'password' => bcrypt($request->password), // Altere "senha" para "password"
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        // Criar o usuário
+        Usuario::create([
+            'Nome' => $request->Nome,
+            'Email' => $request->Email,
+            'Cpf' => $request->Cpf,
+            'Endereco' => $request->Endereco,
+            'Senha' => Hash::make($request->Senha),
         ]);
 
-        return redirect()->route('login')->with('success', 'Registro realizado com sucesso!'); // Redireciona após registro bem-sucedido
+        // Redirecionar após sucesso
+        return redirect()->route('login')->with('success', 'Cadastro realizado com sucesso! Faça login.');
+    }
+
+    //logout do sistema
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
+        // Invalida a sessão do usuário para segurança adicional
+        $request->session()->invalidate();
+
+        // Gera um novo token CSRF
+        $request->session()->regenerateToken();
+
+        // Redireciona para a página de login ou outra página após o logout
+        return redirect('/home')->with('message', 'Você saiu com sucesso.');
     }
 }

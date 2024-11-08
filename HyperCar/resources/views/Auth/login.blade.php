@@ -1,19 +1,38 @@
-@extends('index')
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+<body>
 
-@section('title', 'Login')
-
-@section('content')
     <h2>Login</h2>
+
+    <!-- Formulário de Login -->
     <form action="{{ route('login') }}" method="POST">
         @csrf
-        <div class="mb-3">
-            <label for="email" class="form-label">Email</label>
-            <input type="email" class="form-control" id="email" name="email" required>
+
+        <!-- Email -->
+        <div>
+            <label for="Email">Email</label>
+            <input type="email" name="Email" id="Email" value="{{ old('Email') }}" required>
+            @error('Email')
+                <p style="color:red;">{{ $message }}</p>
+            @enderror
         </div>
-        <div class="mb-3">
-            <label for="senha" class="form-label">Senha</label>
-            <input type="password" class="form-control" id="senha" name="senha" required>
+
+        <!-- Senha -->
+        <div>
+            <label for="Senha">Senha</label>
+            <input type="password" name="Senha" id="Senha" required>
+            @error('Senha')
+                <p style="color:red;">{{ $message }}</p>
+            @enderror
         </div>
-        <button type="submit" class="btn btn-primary">Entrar</button>
+
+        <button type="submit">Login</button>
     </form>
-@endsection
+
+</body>
+</html>

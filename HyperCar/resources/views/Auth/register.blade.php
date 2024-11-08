@@ -1,35 +1,74 @@
-@extends('index')
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Usuário</title>
+</head>
+<body>
 
-@section('title', 'Registrar')
+    <h2>Registrar um Novo Usuário</h2>
 
-@section('content')
-    <h2>Registrar</h2>
+    <!-- Formulário de Registro -->
     <form action="{{ route('register') }}" method="POST">
         @csrf
-        <div class="mb-3">
-            <label for="nome" class="form-label">Nome</label>
-            <input type="text" class="form-control" id="nome" name="nome" required>
+
+        <!-- Nome -->
+        <div>
+            <label for="Nome">Nome</label>
+            <input type="text" name="Nome" id="Nome" value="{{ old('Nome') }}" required>
+            @error('Nome')
+                <p style="color:red;">{{ $message }}</p>
+            @enderror
         </div>
-        <div class="mb-3">
-            <label for="email" class="form-label">Email</label>
-            <input type="email" class="form-control" id="email" name="email" required>
+
+        <!-- Email -->
+        <div>
+            <label for="Email">Email</label>
+            <input type="email" name="Email" id="Email" value="{{ old('Email') }}" required>
+            @error('Email')
+                <p style="color:red;">{{ $message }}</p>
+            @enderror
         </div>
-        <div class="mb-3">
-            <label for="cpf" class="form-label">CPF</label>
-            <input type="text" class="form-control" id="cpf" name="cpf" required>
+
+        <!-- CPF -->
+        <div>
+            <label for="Cpf">CPF</label>
+            <input type="text" name="Cpf" id="Cpf" value="{{ old('Cpf') }}" required maxlength="11" pattern="\d{11}">
+            @error('Cpf')
+                <p style="color:red;">{{ $message }}</p>
+            @enderror
         </div>
-        <div class="mb-3">
-            <label for="endereco" class="form-label">Endereço</label>
-            <input type="text" class="form-control" id="endereco" name="endereco">
+
+        <!-- Endereço -->
+        <div>
+            <label for="Endereco">Endereço</label>
+            <input type="text" name="Endereco" id="Endereco" value="{{ old('Endereco') }}">
+            @error('Endereco')
+                <p style="color:red;">{{ $message }}</p>
+            @enderror
         </div>
-        <div class="mb-3">
-            <label for="senha" class="form-label">Senha</label>
-            <input type="password" class="form-control" id="senha" name="senha" required>
+
+        <!-- Senha -->
+        <div>
+            <label for="Senha">Senha</label>
+            <input type="password" name="Senha" id="Senha" required>
+            @error('Senha')
+                <p style="color:red;">{{ $message }}</p>
+            @enderror
         </div>
-        <div class="mb-3">
-            <label for="senha_confirmation" class="form-label">Confirme a Senha</label>
-            <input type="password" class="form-control" id="senha_confirmation" name="senha_confirmation" required>
+
+        <!-- Confirmação de Senha -->
+        <div>
+            <label for="Senha_confirmation">Confirmar Senha</label>
+            <input type="password" name="Senha_confirmation" id="Senha_confirmation" required>
+            @error('Senha_confirmation')
+                <p style="color:red;">{{ $message }}</p>
+            @enderror
         </div>
-        <button type="submit" class="btn btn-primary">Registrar</button>
+
+        <button type="submit">Registrar</button>
     </form>
-@endsection
+
+</body>
+</html>
